@@ -10,21 +10,14 @@ export const routes = [
     method: "GET",
     path: buildRoutePath("/tasks"),
     handler: (req, res) => {
-      const { title, description } = req.query
+      const { search } = req.query
 
-      let search = {}
+      const tasks = database.select('tasks', {
+        title: search,
+        description: search
+      })
 
-      if (title) {
-        search.title = title
-      }
-
-      if (description) {
-        search.description = description
-      }
-
-      const task = database.select("tasks", search ?? {})
-
-      return res.end(JSON.stringify(task));
+      return res.end(JSON.stringify(tasks));
     },
   },
   {
@@ -103,30 +96,18 @@ export const routes = [
     method: "PATCH",
     path: buildRoutePath("/tasks/:id/complete"),
     handler: (req, res) => {
-      const { completed } = req.body;
       const { id } = req.params
 
-      const taskToUpdate = {}
+      const [task] = database.select('tasks', { id })
 
-      const currentTask = database.getTaskById('tasks', id);
+      if (!task) {
+        return res.writeHead(404).end()
+      }
 
-      if (completed) {
-        database.complete('tasks', id, {
-          ...currentTask,
-          ...taskToUpdate,
-          completed_at: DateTime.now()
-        })
-      } else {
-        database.complete('tasks', id, {
-          ...currentTask,
-          ...taskToUpdate,
-          completed_at: null
-        })
-      }
-      
-      if (!currentTask) {
-        return res.writeHead(400).end('invalid_id')
-      }
+      const isCompleted = !!task.completed_at
+      const completed_at = isCompleted ? null : new Date()
+
+      database.update('tasks', id, { completed_at })
 
       return res.writeHead(201).end();
     }

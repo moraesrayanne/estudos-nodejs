@@ -3,3 +3,4 @@ db/app.db
 .env
 .DS_STORE
 README.md
+db.json
