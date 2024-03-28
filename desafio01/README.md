@@ -1,7 +1,7 @@
 
 # Desafio01
 
-Nesse desafio foi desenvolvida uma API para realizar um CRUD de tarefas.
+Nesse desafio foi desenvolvida uma API para realizar um CRUD de tarefas. Para a persistência dos dados, será utilizado um banco de dados local, armazenando e mantendo os dados em um arquivo denominado db.json.
 
 
 ## Funcionalidades
